@@ -1,0 +1,26 @@
+{
+  "name": "433mhz-middle-man",
+  "version": "1.0.0",
+  "description": "Subscribes to broker on meaningfull topics and publishes to general 433MHz topics",
+  "main": "app.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/RootTheKid/433mhz-middle-man.git"
+  },
+  "keywords": [
+    "MQTT",
+    "433MHz"
+  ],
+  "author": "Thomas Tacke <thomas@tacke.email>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/RootTheKid/433mhz-middle-man/issues"
+  },
+  "homepage": "https://gitlab.com/RootTheKid/433mhz-middle-man#readme",
+  "dependencies": {
+    "async-mqtt": "^2.4.2"
+  }
+}
