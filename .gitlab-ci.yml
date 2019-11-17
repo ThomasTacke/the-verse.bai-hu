@@ -1,7 +1,10 @@
 image: node:10
 
+variables:
+  NODE_ENV: "test"
+
 services:
-  - eclipse-mosquitto:latest
+  - eclipse-mosquitto:latest as mqttBroker
 
 cache:
   paths:
