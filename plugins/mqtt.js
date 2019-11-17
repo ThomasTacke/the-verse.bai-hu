@@ -4,16 +4,12 @@ const fp = require('fastify-plugin')
 const mqtt = require('async-mqtt')
 const options = require(`../config/${process.env.NODE_ENV || 'default'}.json`)
 
-const mqttClient = mqtt.connect(`mqtt://${options.mqtt.host}`)
-
 module.exports = fp(async (fastify, opts) => {
-    mqttClient.on('connect', async () => {
-        fastify.log.info('Connected to MQTT broker')
-    
-        const topic = 'the-verse/+/light'
-        mqttClient.subscribe(topic).then(() => fastify.log.info(`Subscribed to ${topic}`)).catch(fastify.log.error)
-    })
-    
+    const mqttClient = await mqtt.connectAsync(`mqtt://${options.mqtt.host}`)
+    fastify.log.info(`MQTT Client connected to: mqtt://${options.mqtt.host}`)
+    const topic = 'the-verse/+/light'
+    mqttClient.subscribe(topic).then(() => fastify.log.info(`Subscribed to ${topic}`)).catch(fastify.log.error)
+
     mqttClient.on('message', async (topic, payload) => {
         fastify.log.info(`Topic: ${topic}`)
         fastify.log.info(`Light: ${topic.toString().split('/')[1]}`)
@@ -21,11 +17,16 @@ module.exports = fp(async (fastify, opts) => {
         lightSwitch(fastify, topic.toString().split('/')[1], payload.toString())
     })
 
-    fastify.decorate('mqtt', (light, newState) => {
-        fastify.log.info(light)
-        fastify.log.info(newState)
-        lightSwitch(fastify, light, newState)
-    })
+    fastify
+        .decorate('mqtt', (light, newState) => {
+            fastify.log.info(light)
+            fastify.log.info(newState)
+            lightSwitch(fastify, light, newState)
+        })
+        .addHook('onClose', async (fastify, done) => {
+            await mqttClient.end()
+            done()
+        })
 })
 
 async function lightSwitch(fastify, light, payload) {
