@@ -1,0 +1,15 @@
+{
+    "service": {
+        "port": 80,
+        "host": "127.0.0.1",
+        "routePrefix": ""
+    },
+    "mqtt": {
+        "host": "192.168.42.45",
+        "port": 1883
+    },
+    "logger": {
+        "size": "10M",
+        "interval": "1d"
+    }
+}

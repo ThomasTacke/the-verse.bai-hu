@@ -1,34 +1,36 @@
-const mqtt = require('async-mqtt')
+'use strict'
 
-const mqttClient = mqtt.connect('mqtt://192.168.42.45')
+const path = require('path')
+const AutoLoad = require('fastify-autoload')
+const swaggerOptions = require('./config/swagger')
+const options = require(`./config/${process.env.NODE_ENV || 'default'}.json`)
 
-mqttClient.on('connect', async () => {
-    console.log('Connected to MQTT broker')
+module.exports = (fastify, opts, next)  => {
+    // Place here your custom code!
+    fastify
+        .register(require('fastify-swagger'), swaggerOptions)
+        .ready(err => {
+            if (err) fastify.log.error(err)
+            fastify.swagger()
+        })
 
-    const topic = 'the-verse/+/light'
-    mqttClient.subscribe(topic).then(() => console.log(`Subscribed to ${topic}`)).catch(console.log)
-})
+    // Do not touch the following lines
 
-mqttClient.on('message', async (topic, payload) => {
-    let light = topic.toString().split('/')
-    console.log(light)
-    switch (light[1]) {
-        case 'kitchen-pc':
-            mqttClient.publish('the-verse/433/lights', payload.toString() === 'on' ? '010111011101010000001100' : '010111011101010000000011').catch(console.log)
-            break;
-        case 'vitrine':
-            mqttClient.publish('the-verse/433/lights', payload.toString() === 'on' ? '010111010111010000001100' : '010111010111010000000011').catch(console.log)
-            break;
-        case 'nightstand':
-            mqttClient.publish('the-verse/433/lights', payload.toString() === 'on' ? '010111010101110000001100' : '010111010101110000000011').catch(console.log)
-            break;            
-        case 'all':
-            await mqttClient.publish('the-verse/kitchen-pc/light', payload.toString() === 'on' ? 'on' : 'off').catch(console.log)
-            await mqttClient.publish('the-verse/vitrine/light', payload.toString() === 'on' ? 'on' : 'off').catch(console.log)
-            break;
-        default:
-            break;
-    }
-    console.log(topic)
-    console.log(payload.toString())
-})
+    // This loads all plugins defined in plugins
+    // those should be support plugins that are reused
+    // through your application
+    fastify.register(AutoLoad, {
+        dir: path.join(__dirname, 'plugins'),
+        options: Object.assign({}, opts)
+    })
+
+    // This loads all plugins defined in services
+    // define your routes in one of these
+    fastify.register(AutoLoad, {
+        dir: path.join(__dirname, 'services'),
+        options: Object.assign({}, opts)
+    })
+
+    // Make sure to call next when done
+    next()
+}

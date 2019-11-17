@@ -1,10 +1,16 @@
 {
   "name": "433mhz-middle-man",
   "version": "1.0.0",
-  "description": "Subscribes to broker on meaningfull topics and publishes to general 433MHz topics",
+  "description": "",
   "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
   "scripts": {
-    "test": "npm test"
+    "test": "tap test/**/*.test.js",
+    "start": "fastify start -l info app.js",
+    "dev": "fastify start -l info -P app.js",
+    "docker:buildx": "docker buildx build --platform linux/arm64,linux/amd64,linux/arm/v7 --push -t rootthekid/433mhz-middle-man:latest  ."
   },
   "repository": {
     "type": "git",
@@ -21,6 +27,15 @@
   },
   "homepage": "https://gitlab.com/RootTheKid/433mhz-middle-man#readme",
   "dependencies": {
-    "async-mqtt": "^2.4.2"
+    "async-mqtt": "^2.4.2",
+    "fastify": "^2.0.0",
+    "fastify-autoload": "^1.0.0",
+    "fastify-cli": "^1.3.0",
+    "fastify-plugin": "^1.5.0",
+    "fastify-swagger": "^2.4.0",
+    "rotating-file-stream": "^1.4.6"
+  },
+  "devDependencies": {
+    "tap": "^12.5.3"
   }
 }

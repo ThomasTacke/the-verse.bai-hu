@@ -8,6 +8,7 @@ WORKDIR /usr/src/app
 # where available (npm@5+)
 COPY package*.json ./
 
+RUN npm install -g fastify-cli
 RUN npm install
 # If you are building your code for production
 # RUN npm ci --only=production
@@ -15,4 +16,5 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-CMD [ "node", "app.js" ]
+EXPOSE 3000
+CMD [ "npm", "start" ]
