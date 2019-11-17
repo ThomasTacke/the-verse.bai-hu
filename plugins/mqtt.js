@@ -5,6 +5,7 @@ const mqtt = require('async-mqtt')
 const options = require(`../config/${process.env.NODE_ENV || 'default'}.json`)
 
 module.exports = fp(async (fastify, opts) => {
+    console.log(`Trying to connect to: mqtt://${options.mqtt.host}`)
     const mqttClient = await mqtt.connectAsync(`mqtt://${options.mqtt.host}`)
     fastify.log.info(`MQTT Client connected to: mqtt://${options.mqtt.host}`)
     const topic = 'the-verse/+/light'
