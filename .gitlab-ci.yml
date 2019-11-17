@@ -1,7 +1,7 @@
 image: node:10
 
 services:
-  - eclipse-mosquitto:latest as mqttBroker
+  - eclipse-mosquitto:latest
 
 test_async:
   script:

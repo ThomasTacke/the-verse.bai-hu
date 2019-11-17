@@ -5,7 +5,7 @@
         "routePrefix": ""
     },
     "mqtt": {
-        "host": "mqttBroker",
+        "host": "eclipse-mosquitto",
         "port": 1883
     },
     "logger": {
