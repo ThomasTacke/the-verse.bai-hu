@@ -1,5 +1,12 @@
 version: '3'
+
+variables:
+  NODE_ENV: test
+
 services:
+  mqttBroker:
+    image: eclipse-mosquitto:latest as mqttBroker
+
   web:
     build: .
     ports:

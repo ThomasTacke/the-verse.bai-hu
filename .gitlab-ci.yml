@@ -6,9 +6,10 @@ variables:
 services:
   - eclipse-mosquitto:latest as mqttBroker
 
-cache:
-  paths:
-    - node_modules/
+test_variable:
+  stage: test
+  script:
+    - echo $NODE_ENV
 
 test_async:
   script:
