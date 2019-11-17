@@ -1,13 +1,12 @@
 version: '3'
 
-variables:
-  NODE_ENV: test
-
 services:
   mqttBroker:
-    image: eclipse-mosquitto:latest as mqttBroker
+    image: eclipse-mosquitto:latest
 
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: test.Dockerfile
     ports:
       - 3000:80

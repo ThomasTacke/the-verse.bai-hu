@@ -1,15 +1,7 @@
 image: node:10
 
-variables:
-  NODE_ENV: test
-
 services:
   - eclipse-mosquitto:latest as mqttBroker
-
-test_variable:
-  stage: test
-  script:
-    - echo $NODE_ENV
 
 test_async:
   script:

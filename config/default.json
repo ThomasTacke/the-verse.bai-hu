@@ -5,7 +5,7 @@
         "routePrefix": ""
     },
     "mqtt": {
-        "host": "192.168.42.45",
+        "host": "mqttBroker",
         "port": 1883
     },
     "logger": {
