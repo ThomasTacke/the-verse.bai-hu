@@ -1,0 +1,13 @@
+image: node:10
+
+services:
+  - eclipse-mosquitto:latest
+
+cache:
+  paths:
+    - node_modules/
+
+test_async:
+  script:
+    - npm install
+    - npm run test
