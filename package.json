@@ -23,7 +23,7 @@
     "433MHz"
   ],
   "author": "Thomas Tacke <thomas@tacke.email>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://gitlab.com/RootTheKid/433mhz-middle-man/issues"
   },
