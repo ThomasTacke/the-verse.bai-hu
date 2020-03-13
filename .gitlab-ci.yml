@@ -1,8 +1,3 @@
-include:
-  - template: Dependency-Scanning.gitlab-ci.yml
-  - template: License-Scanning.gitlab-ci.yml
-  - template: SAST.gitlab-ci.yml
-
 default:
   image: node:lts-alpine3.9
 
@@ -35,3 +30,9 @@ docker-build-master:
 stages:
   - test
   - deploy
+
+include:
+  - template: Dependency-Scanning.gitlab-ci.yml
+  - template: License-Scanning.gitlab-ci.yml
+  - template: SAST.gitlab-ci.yml
+  - template: Security/Container-Scanning.gitlab-ci.ym
