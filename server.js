@@ -2,7 +2,6 @@
 
 // Read the .env file.
 require('dotenv').config()
-const isDocker = require('is-docker')
 
 // Require the framework
 const Fastify = require('fastify')
@@ -14,7 +13,7 @@ const fastify = Fastify({
 })
 
 const port = process.env.PORT || 3000
-const address = process.env.ADDRESS || isDocker() ? '0.0.0.0' : '127.0.0.1'
+const address = process.env.ADDRESS || '127.0.0.1'
 
 // Register your application as a normal plugin.
 fastify.register(require('./app.js'), {

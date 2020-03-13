@@ -20,7 +20,8 @@ module.exports = (fastify, opts, next) => {
           url: 'https://swagger.io',
           description: 'Find more info here'
         },
-        host: `${opts.address}:${opts.port}`,
+        // host: `${opts.address}:${opts.port}`,
+        host: '127.0.0.1:3000',
         schemes: ['http'],
         consumes: ['application/json'],
         produces: ['application/json'],

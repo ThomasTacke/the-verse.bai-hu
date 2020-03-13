@@ -1,12 +1,12 @@
 'use strict'
 
-const isDocker = require('is-docker')
 const fp = require('fastify-plugin')
 const mqtt = require('async-mqtt')
 
-const mqttBroker = isDocker() ? 'eclipse-mosquitto' : process.env.MQTT_BROKER
+const mqttBroker = process.env.MQTT_BROKER || 'eclipse-mosquitto'
 
 module.exports = fp(async (fastify, opts, next) => {
+  fastify.log.info({ plugin: 'mqtt', event: 'on-connect' }, `Connecting to: mqtt://${mqttBroker}`)
   const mqttClient = await mqtt.connectAsync(`mqtt://${mqttBroker}`)
   fastify.log.info({ plugin: 'mqtt', event: 'on-connect' }, `MQTT Client connected to: mqtt://${mqttBroker}`)
   const topic = 'the-verse/+/light'
@@ -32,19 +32,22 @@ module.exports = fp(async (fastify, opts, next) => {
 
 async function lightSwitch (fastify, mqttClient, light, payload) {
   fastify.log.info({ plugin: 'mqtt', event: 'publish', light: light, payload: JSON.stringify(payload) })
+  const onCode = '1100'
+  const offCode = '0011'
   switch (light) {
     case 'kitchen-pc':
-      await mqttClient.publish('the-verse/433/lights', payload === 'on' ? '010111011101010000001100' : '010111011101010000000011').catch(fastify.log.error)
+      await mqttClient.publish('the-verse/433/lights', payload === 'on' ? `01011101110101000000${onCode}` : `01011101110101000000${offCode}`).catch(fastify.log.error)
       break
     case 'vitrine':
-      await mqttClient.publish('the-verse/433/lights', payload === 'on' ? '010111010111010000001100' : '010111010111010000000011').catch(fastify.log.error)
+      await mqttClient.publish('the-verse/433/lights', payload === 'on' ? `01011101011101000000${onCode}` : `01011101011101000000${offCode}`).catch(fastify.log.error)
       break
     case 'nightstand':
-      await mqttClient.publish('the-verse/433/lights', payload === 'on' ? '010111010101110000001100' : '010111010101110000000011').catch(fastify.log.error)
+      await mqttClient.publish('the-verse/433/lights', payload === 'on' ? `01011101010111000000${onCode}` : `01011101010111000000${offCode}`).catch(fastify.log.error)
       break
     case 'all':
-      await mqttClient.publish('the-verse/kitchen-pc/light', payload.toString() === 'on' ? 'on' : 'off').catch(fastify.log.error)
-      await mqttClient.publish('the-verse/vitrine/light', payload.toString() === 'on' ? 'on' : 'off').catch(fastify.log.error)
+      await mqttClient.publish('the-verse/kitchen-pc/light', payload.toString() === 'on' ? 'on' : 'off', { retain: true }).catch(fastify.log.error)
+      await mqttClient.publish('the-verse/vitrine/light', payload.toString() === 'on' ? 'on' : 'off', { retain: true }).catch(fastify.log.error)
+      await mqttClient.publish('the-verse/nightstand/light', payload.toString() === 'on' ? 'on' : 'off', { retain: true }).catch(fastify.log.error)
       break
     default:
       break
