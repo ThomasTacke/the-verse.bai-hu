@@ -4,6 +4,22 @@ default:
 services:
   - eclipse-mosquitto:latest
 
+buildx:
+  image: docker:latest
+  stage: buildx
+  variables:
+    GIT_STRATEGY: none
+  artifacts:
+    paths:
+      - buildx
+    expire_in: 1 hour
+  services:
+    - docker:dind
+  script:
+    - export DOCKER_BUILDKIT=1
+    - git clone git://github.com/docker/buildx ./docker-buildx
+    - docker build --platform=local -o . ./docker-buildx
+
 build:
   image: docker:latest
   stage: build
@@ -30,9 +46,14 @@ docker-build-master:
   stage: deploy
   services:
     - docker:dind
+      command: ["--experimental"]
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - mkdir -p ~/.docker/cli-plugins
+    - mv buildx ~/.docker/cli-plugins/docker-buildx
+    - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
   script:
+    - docker buildx create --use --name mybuilder
     - docker buildx build --platform linux/arm64,linux/amd64,linux/arm/v7 --pull --target prod -t "$CI_REGISTRY_IMAGE" .
     - docker push "$CI_REGISTRY_IMAGE"
   only:
@@ -41,6 +62,7 @@ docker-build-master:
 stages:
   - build
   - test
+  - buildx
   - deploy
 
 include:
