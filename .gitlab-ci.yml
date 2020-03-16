@@ -25,22 +25,22 @@ test_async:
     - npm install
     - npm run test
 
-docker-build-amd64:
-  image: docker:latest
-  stage: deploy
-  services:
-    - docker:dind
-  before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-    - apk add python
-  script:
-    - docker build --pull --target prod -t "$CI_REGISTRY_IMAGE" .
-    - docker push "$CI_REGISTRY_IMAGE"
-  only:
-    - master
+# docker-build-amd64:
+#   image: docker:latest
+#   stage: deploy
+#   services:
+#     - docker:dind
+#   before_script:
+#     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+#     - apk add python
+#   script:
+#     - docker build --pull --target prod -t "$CI_REGISTRY_IMAGE" .
+#     - docker push "$CI_REGISTRY_IMAGE"
+#   only:
+#     - master
     
 
-docker-build-armv7:
+docker-build:
   image: docker:latest
   stage: deploy
   services:
@@ -49,18 +49,19 @@ docker-build-armv7:
     GIT_STRATEGY: none
     DOCKER_CLI_EXPERIMENTAL: enabled
   before_script:
-    - apk add --update git
-    - git clone git://github.com/docker/buildx ./docker-buildx
-    - export DOCKER_CLI_EXPERIMENTAL=enabled
-    - docker build --platform=local -o . ./docker-buildx
+    # - apk add --update git
+    # - git clone git://github.com/docker/buildx ./docker-buildx
+    # - export DOCKER_CLI_EXPERIMENTAL=enabled
+    # - docker build --platform=local -o . ./docker-buildx
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-    - mkdir -p ~/.docker/cli-plugins
-    - mv buildx ~/.docker/cli-plugins/docker-buildx
-    - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+    # - mkdir -p ~/.docker/cli-plugins
+    # - mv buildx ~/.docker/cli-plugins/docker-buildx
+    # - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
     - apk add python
   script:
-    - docker buildx create --use --name mybuilder
-    - docker buildx build --platform linux/arm/v7 --pull --target prod -t "$CI_REGISTRY_IMAGE" .
+    # - docker buildx create --use --name mybuilder
+    # - docker buildx build --platform linux/arm/v7 --pull --target prod -t "$CI_REGISTRY_IMAGE" .
+    - docker build --platform linux/arm/v7,linux/amd64 --pull --target prod -t "$CI_REGISTRY_IMAGE" .
     - docker push "$CI_REGISTRY_IMAGE"
   only:
     - master
