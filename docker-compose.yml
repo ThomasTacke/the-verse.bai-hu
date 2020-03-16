@@ -15,7 +15,7 @@ services:
       - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
 
   dev:
-    image: 433mhz-middle-man:dev
+    image: registry.gitlab.com/smart-home-the-verse/433mhz-middle-man:dev
     container_name: 433mhz-middle-man-dev
     depends_on:
       - mosquitto
@@ -36,7 +36,7 @@ services:
     command: [ "/bin/ash" ]
 
   web:
-    image: 433mhz-middle-man:latest
+    image: registry.gitlab.com/smart-home-the-verse/433mhz-middle-man:latest
     build:
       context: .
       target: prod
