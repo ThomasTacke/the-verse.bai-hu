@@ -16,6 +16,24 @@ build:
     - docker build --target prod -t $IMAGE_TAG .
     - docker push $IMAGE_TAG
 
+buildx:
+  image: docker:latest
+  stage: buildx
+  variables:
+    GIT_STRATEGY: none
+    DOCKER_CLI_EXPERIMENTAL: enabled
+  artifacts:
+    paths:
+      - buildx
+    expire_in: 1 hour
+  services:
+    - docker:dind
+  script:
+    - export DOCKER_BUILDKIT=1
+    - apk add --update git
+    - git clone git://github.com/docker/buildx ./docker-buildx
+    - docker build --platform=local -o . ./docker-buildx
+
 test_async:
   stage: test
   only:
@@ -24,21 +42,6 @@ test_async:
   script:
     - npm install
     - npm run test
-
-# docker-build-amd64:
-#   image: docker:latest
-#   stage: deploy
-#   services:
-#     - docker:dind
-#   before_script:
-#     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-#     - apk add python
-#   script:
-#     - docker build --pull --target prod -t "$CI_REGISTRY_IMAGE" .
-#     - docker push "$CI_REGISTRY_IMAGE"
-#   only:
-#     - master
-    
 
 docker-build:
   image: docker:latest
@@ -49,10 +52,6 @@ docker-build:
     GIT_STRATEGY: none
     DOCKER_CLI_EXPERIMENTAL: enabled
   before_script:
-    - apk add --update git
-    - git clone git://github.com/docker/buildx ./docker-buildx
-    - export DOCKER_CLI_EXPERIMENTAL=enabled
-    - docker build --platform=local -o . ./docker-buildx
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - mkdir -p ~/.docker/cli-plugins
     - mv buildx ~/.docker/cli-plugins/docker-buildx
@@ -68,6 +67,7 @@ docker-build:
 stages:
   - build
   - test
+  - buildx
   - deploy
 
 include:
