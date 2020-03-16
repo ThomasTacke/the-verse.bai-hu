@@ -57,11 +57,11 @@ docker-build:
     # - mkdir -p ~/.docker/cli-plugins
     # - mv buildx ~/.docker/cli-plugins/docker-buildx
     # - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-    - apk add python
   script:
     # - docker buildx create --use --name mybuilder
     # - docker buildx build --platform linux/arm/v7 --pull --target prod -t "$CI_REGISTRY_IMAGE" .
-    - docker build --platform linux/arm/v7,linux/amd64 --pull --target prod -t "$CI_REGISTRY_IMAGE" .
+    - docker buildx create --use --name mybuilder
+    - docker buildx build --platform linux/arm/v7,linux/amd64 --pull --target prod -t "$CI_REGISTRY_IMAGE" .
     - docker push "$CI_REGISTRY_IMAGE"
   only:
     - master
