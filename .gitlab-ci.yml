@@ -77,3 +77,7 @@ include:
   - template: SAST.gitlab-ci.yml
   - template: Container-Scanning.gitlab-ci.yml
   - template: Code-Quality.gitlab-ci.yml
+  
+code_quality:
+  artifacts:
+    paths: [gl-code-quality-report.json]
