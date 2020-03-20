@@ -48,7 +48,19 @@ async function onOrOff (payload, room) {
 
   const myPayload = []
 
-  if (room === 'all') { myPayload.push(payload === 'on' ? [kitchenOnCode, vitrineOnCode, nightstandOnCode] : [kitchenOffCode, vitrineOffCode, nightstandOffCode]) }
+  const allOn = [
+    kitchenOnCode,
+    vitrineOnCode,
+    nightstandOnCode
+  ]
+
+  const allOff = [
+    kitchenOffCode,
+    vitrineOffCode,
+    nightstandOffCode
+  ]
+
+  if (room === 'all') { myPayload.push(payload === 'on' ? allOn : allOff) }
 
   if (room === 'kitchen-pc') { myPayload.push(payload === 'on' ? kitchenOnCode : kitchenOffCode) }
 

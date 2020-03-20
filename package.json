@@ -10,8 +10,8 @@
     "pretest": "standard",
     "lint": "standard --fix",
     "test": "tap test/**/*.test.js",
-    "start": "fastify start -l info app.js",
-    "dev": "fastify start -l info -P app.js",
+    "start": "node server.js",
+    "dev": "fastify start -l info -w app.js",
     "docker:buildx": "docker buildx build --platform linux/arm64,linux/amd64,linux/arm/v7 --push -t rootthekid/433mhz-middle-man:latest  ."
   },
   "repository": {

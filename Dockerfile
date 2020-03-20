@@ -6,10 +6,12 @@ RUN npm install -g fastify-cli
 
 FROM base AS dev
 RUN npm install -g standard
+COPY package*.json ./
+RUN npm install
 
 # Prod image
 FROM base AS prod
 COPY package*.json ./
 RUN npm install
 COPY . .
-CMD [ "npm", "start" ]
+CMD [ "npm", "run", "start" ]
