@@ -1,5 +1,5 @@
 module.exports = {
-  routePrefix: '/documentation',
+  routePrefix: '/swagger',
   exposeRoute: true,
   swagger: {
     info: {

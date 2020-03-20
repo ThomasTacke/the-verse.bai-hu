@@ -48,13 +48,13 @@ async function onOrOff (payload, room) {
 
   const myPayload = []
 
-  if (room === 'all') { payload === 'on' ? myPayload.push(kitchenOnCode, vitrineOnCode, nightstandOnCode) : myPayload.push(kitchenOffCode, vitrineOffCode, nightstandOffCode) }
+  if (room === 'all') { myPayload.push(payload === 'on' ? [kitchenOnCode, vitrineOnCode, nightstandOnCode] : [kitchenOffCode, vitrineOffCode, nightstandOffCode]) }
 
-  if (room === 'kitchen-pc') { payload === 'on' ? myPayload.push(kitchenOnCode) : myPayload.push(kitchenOffCode) }
+  if (room === 'kitchen-pc') { myPayload.push(payload === 'on' ? kitchenOnCode : kitchenOffCode) }
 
-  if (room === 'vitrine') { payload === 'on' ? myPayload.push(vitrineOnCode) : myPayload.push(vitrineOffCode) }
+  if (room === 'vitrine') { myPayload.push(payload === 'on' ? vitrineOnCode : vitrineOffCode) }
 
-  if (room === 'nightstand') { payload === 'on' ? myPayload.push(nightstandOnCode) : myPayload.push(nightstandOffCode) }
+  if (room === 'nightstand') { myPayload.push(payload === 'on' ? nightstandOnCode : nightstandOffCode) }
 
   return myPayload
 }
