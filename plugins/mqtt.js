@@ -30,46 +30,37 @@ module.exports = fp(async function (fastify, opts, next) {
   next()
 })
 
-async function noop () { }
-
-const onCode = '1100'
-const offCode = '0011'
-
-const kitchenCode = '01011101110101000000'
-const kitchenOnCode = kitchenCode + onCode
-const kitchenOffCode = kitchenCode + offCode
-
-const vitrineCode = '01011101011101000000'
-const vitrineOnCode = vitrineCode + onCode
-const vitrineOffCode = vitrineCode + offCode
-
-const nightstandCode = '01011101010111000000'
-const nightstandOnCode = nightstandCode + onCode
-const nightstandOffCode = nightstandCode + offCode
-
-const topic = 'the-verse/433/lights'
-
 async function onOrOff (payload, room) {
+  const onCode = '1100'
+  const offCode = '0011'
+
+  const kitchenCode = '01011101110101000000'
+  const kitchenOnCode = kitchenCode + onCode
+  const kitchenOffCode = kitchenCode + offCode
+
+  const vitrineCode = '01011101011101000000'
+  const vitrineOnCode = vitrineCode + onCode
+  const vitrineOffCode = vitrineCode + offCode
+
+  const nightstandCode = '01011101010111000000'
+  const nightstandOnCode = nightstandCode + onCode
+  const nightstandOffCode = nightstandCode + offCode
+
   const myPayload = []
 
-  if (payload === 'on') {
-    room === 'kitchen-pc' ? myPayload.push(kitchenOnCode)
-      : room === 'vitrine' ? myPayload.push(vitrineOnCode)
-        : room === 'nighstand' ? myPayload.push(nightstandOnCode)
-          : room === 'all' ? myPayload.push(kitchenOnCode, vitrineOnCode, nightstandOnCode)
-            : await noop()
-  } else {
-    room === 'kitchen-pc' ? myPayload.push(kitchenOffCode)
-      : room === 'vitrine' ? myPayload.push(vitrineOffCode)
-        : room === 'nighstand' ? myPayload.push(nightstandOffCode)
-          : room === 'all' ? myPayload.push(kitchenOffCode, vitrineOffCode, nightstandOffCode)
-            : await noop()
-  }
+  if (room === 'all') { payload === 'on' ? myPayload.push(kitchenOnCode, vitrineOnCode, nightstandOnCode) : myPayload.push(kitchenOffCode, vitrineOffCode, nightstandOffCode) }
+
+  if (room === 'kitchen-pc') { payload === 'on' ? myPayload.push(kitchenOnCode) : myPayload.push(kitchenOffCode) }
+
+  if (room === 'vitrine') { payload === 'on' ? myPayload.push(vitrineOnCode) : myPayload.push(vitrineOffCode) }
+
+  if (room === 'nightstand') { payload === 'on' ? myPayload.push(nightstandOnCode) : myPayload.push(nightstandOffCode) }
 
   return myPayload
 }
 
 async function lightSwitch (fastify, mqttClient, room, payload) {
+  const topic = 'the-verse/433/lights'
   const payloads = await onOrOff(payload, room).catch(fastify.log.error)
   for (const item in payloads) {
     fastify.log.info({ plugin: 'mqtt', event: 'publish', topic: topic, room: room, payload: JSON.stringify(item) })

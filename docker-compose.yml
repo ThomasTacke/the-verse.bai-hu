@@ -21,7 +21,7 @@ services:
       - mosquitto
     build: 
       context: .
-      target: base
+      target: dev
     volumes: 
       - .:/usr/src/app
     environment: 

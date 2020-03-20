@@ -3,12 +3,19 @@
 require('dotenv').config()
 const { test } = require('tap')
 const Fastify = require('fastify')
+const mqtt = require('async-mqtt')
 const mqttPlugin = require('../../plugins/mqtt')
 
+const mqttBroker = process.env.MQTT_BROKER || 'eclipse-mosquitto'
+
 test('mqtt works standalone', async (t) => {
-  t.plan(10)
   const fastify = Fastify()
+  const mqttClient = await mqtt.connectAsync(`mqtt://${mqttBroker}`)
+
   fastify.register(mqttPlugin)
+
+  await mqttClient.publish('the-verse/kitchen-pc/light', 'on', { retain: true })
+  await mqttClient.end()
 
   await fastify.ready()
   t.equal(await fastify.mqtt('kitchen-pc', 'off'), 'Done')
@@ -21,7 +28,6 @@ test('mqtt works standalone', async (t) => {
   t.equal(await fastify.mqtt('all', 'on'), 'Done')
   t.equal(await fastify.mqtt('', 'off'), 'Done')
   t.equal(await fastify.mqtt('', 'on'), 'Done')
-  t.done()
 
   fastify.close()
 })

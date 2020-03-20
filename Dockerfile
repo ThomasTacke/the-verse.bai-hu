@@ -4,6 +4,9 @@ EXPOSE 3000
 WORKDIR /usr/src/app
 RUN npm install -g fastify-cli
 
+FROM base AS dev
+RUN npm install -g standard
+
 # Prod image
 FROM base AS prod
 COPY package*.json ./
