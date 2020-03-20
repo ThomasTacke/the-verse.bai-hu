@@ -16,23 +16,23 @@ build:
     - docker build --target prod -t $IMAGE_TAG .
     - docker push $IMAGE_TAG
 
-buildx:
-  image: docker:latest
-  stage: buildx
-  variables:
-    GIT_STRATEGY: none
-    DOCKER_CLI_EXPERIMENTAL: enabled
-  artifacts:
-    paths:
-      - buildx
-    expire_in: 1 hour
-  services:
-    - docker:dind
-  script:
-    - export DOCKER_BUILDKIT=1
-    - apk add --update git
-    - git clone git://github.com/docker/buildx ./docker-buildx
-    - docker build --platform=local -o . ./docker-buildx
+# buildx:
+#   image: docker:latest
+#   stage: buildx
+#   variables:
+#     GIT_STRATEGY: none
+#     DOCKER_CLI_EXPERIMENTAL: enabled
+#   artifacts:
+#     paths:
+#       - buildx
+#     expire_in: 1 hour
+#   services:
+#     - docker:dind
+#   script:
+#     - export DOCKER_BUILDKIT=1
+#     - apk add --update git
+#     - git clone git://github.com/docker/buildx ./docker-buildx
+#     - docker build --platform=local -o . ./docker-buildx
 
 test_async:
   stage: test
@@ -53,12 +53,13 @@ docker-build:
     DOCKER_CLI_EXPERIMENTAL: enabled
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-    - mkdir -p ~/.docker/cli-plugins
-    - mv buildx ~/.docker/cli-plugins/docker-buildx
-    - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+    # - mkdir -p ~/.docker/cli-plugins
+    # - mv buildx ~/.docker/cli-plugins/docker-buildx
+    # - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
   script:
-    - docker buildx create --use --name mybuilder
-    - docker buildx build --platform linux/arm/v7,linux/amd64 --pull --target prod -t "$CI_REGISTRY_IMAGE" .
+    # - docker buildx create --use --name mybuilder
+    # - docker buildx build --platform linux/arm/v7,linux/amd64 --pull --target prod -t "$CI_REGISTRY_IMAGE" .
+    - docker build --pull --target prod -t "$CI_REGISTRY_IMAGE" .
     - docker push "$CI_REGISTRY_IMAGE"
   only:
     - master
