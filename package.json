@@ -38,6 +38,7 @@
     "fastify-swagger": "^2.5.0"
   },
   "devDependencies": {
+    "standard": "^14.3.3",
     "tap": "^14.10.7"
   }
 }
