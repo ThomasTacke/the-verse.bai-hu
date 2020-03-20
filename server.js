@@ -22,7 +22,7 @@ fastify.register(require('./app.js'), {
 })
 
 // Start listening.
-async function start() {
+async function start () {
   try {
     await fastify.listen(port, address)
   } catch (error) {

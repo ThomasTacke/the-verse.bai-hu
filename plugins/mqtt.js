@@ -30,34 +30,50 @@ module.exports = fp(async function (fastify, opts, next) {
   next()
 })
 
-async function noop() { }
+async function noop () { }
 
-async function lightSwitch(fastify, mqttClient, room, payload) {
-  const onCode = '1100'
-  const offCode = '0011'
+const onCode = '1100'
+const offCode = '0011'
 
-  let wirelessSockets = {
-    kitchenPayload: payload === 'on' ? `01011101110101000000${onCode}` : `01011101110101000000${offCode}`,
-    vitrinePayload: payload === 'on' ? `01011101011101000000${onCode}` : `01011101011101000000${offCode}`,
-    nighstandPayload: payload === 'on' ? `01011101010111000000${onCode}` : `01011101010111000000${offCode}`
+const kitchenCode = '01011101110101000000'
+const kitchenOnCode = kitchenCode + onCode
+const kitchenOffCode = kitchenCode + offCode
+
+const vitrineCode = '01011101011101000000'
+const vitrineOnCode = vitrineCode + onCode
+const vitrineOffCode = vitrineCode + offCode
+
+const nightstandCode = '01011101010111000000'
+const nightstandOnCode = nightstandCode + onCode
+const nightstandOffCode = nightstandCode + offCode
+
+const topic = 'the-verse/433/lights'
+
+async function onOrOff (payload, room) {
+  const myPayload = []
+
+  if (payload === 'on') {
+    room === 'kitchen-pc' ? myPayload.push(kitchenOnCode)
+      : room === 'vitrine' ? myPayload.push(vitrineOnCode)
+        : room === 'nighstand' ? myPayload.push(nightstandOnCode)
+          : room === 'all' ? myPayload.push(kitchenOnCode, vitrineOnCode, nightstandOnCode)
+            : await noop()
+  } else {
+    room === 'kitchen-pc' ? myPayload.push(kitchenOffCode)
+      : room === 'vitrine' ? myPayload.push(vitrineOffCode)
+        : room === 'nighstand' ? myPayload.push(nightstandOffCode)
+          : room === 'all' ? myPayload.push(kitchenOffCode, vitrineOffCode, nightstandOffCode)
+            : await noop()
   }
 
-  payload = room === 'kitchen-pc' ? wirelessSockets.kitchenPayload
-    : room === 'vitrine' ? wirelessSockets.vitrinePayload
-      : room === 'nighstand' ? wirelessSockets.nighstandPayload
-        : room === 'all' ? payload
-          : await noop()
+  return myPayload
+}
 
-  const topic = 'the-verse/433/lights'
-
-  if (room === 'all') {
-    Object.values(wirelessSockets).forEach(socket => {
-      fastify.log.info({ plugin: 'mqtt', event: 'publish', topic: topic, room: room, payload: JSON.stringify(socket) })
-      mqttClient.publish(topic, socket, { retain: true }).catch(fastify.log.error)
-    })
-  } else {
-    fastify.log.info({ plugin: 'mqtt', event: 'publish', topic: topic, room: room, payload: JSON.stringify(payload) })
-    await mqttClient.publish(topic, payload, { retain: true }).catch(fastify.log.error)
+async function lightSwitch (fastify, mqttClient, room, payload) {
+  const payloads = await onOrOff(payload, room).catch(fastify.log.error)
+  for (const item in payloads) {
+    fastify.log.info({ plugin: 'mqtt', event: 'publish', topic: topic, room: room, payload: JSON.stringify(item) })
+    mqttClient.publish(topic, item, { retain: true }).catch(fastify.log.error)
   }
 
   return 'Done'

@@ -3,7 +3,7 @@
 module.exports = (fastify) => {
   const module = {}
 
-  module.getLights = async function(req, reply) {
+  module.getLights = async function (req, reply) {
     reply.code(501)
     reply.send({
       code: 501,
