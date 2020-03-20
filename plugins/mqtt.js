@@ -5,7 +5,7 @@ const mqtt = require('async-mqtt')
 
 const mqttBroker = process.env.MQTT_BROKER || 'eclipse-mosquitto'
 
-module.exports = fp(async (fastify, opts, next) => {
+module.exports = fp(async function (fastify, opts, next) {
   fastify.log.info({ plugin: 'mqtt', event: 'on-connect' }, `Connecting to: mqtt://${mqttBroker}`)
   const mqttClient = await mqtt.connectAsync(`mqtt://${mqttBroker}`)
   fastify.log.info({ plugin: 'mqtt', event: 'on-connect' }, `MQTT Client connected to: mqtt://${mqttBroker}`)
@@ -30,27 +30,42 @@ module.exports = fp(async (fastify, opts, next) => {
   next()
 })
 
-async function lightSwitch (fastify, mqttClient, light, payload) {
-  fastify.log.info({ plugin: 'mqtt', event: 'publish', light: light, payload: JSON.stringify(payload) })
+async function onOrOff (payload, room) {
   const onCode = '1100'
   const offCode = '0011'
-  switch (light) {
-    case 'kitchen-pc':
-      await mqttClient.publish('the-verse/433/lights', payload === 'on' ? `01011101110101000000${onCode}` : `01011101110101000000${offCode}`).catch(fastify.log.error)
-      break
-    case 'vitrine':
-      await mqttClient.publish('the-verse/433/lights', payload === 'on' ? `01011101011101000000${onCode}` : `01011101011101000000${offCode}`).catch(fastify.log.error)
-      break
-    case 'nightstand':
-      await mqttClient.publish('the-verse/433/lights', payload === 'on' ? `01011101010111000000${onCode}` : `01011101010111000000${offCode}`).catch(fastify.log.error)
-      break
-    case 'all':
-      await mqttClient.publish('the-verse/kitchen-pc/light', payload.toString() === 'on' ? 'on' : 'off', { retain: true }).catch(fastify.log.error)
-      await mqttClient.publish('the-verse/vitrine/light', payload.toString() === 'on' ? 'on' : 'off', { retain: true }).catch(fastify.log.error)
-      await mqttClient.publish('the-verse/nightstand/light', payload.toString() === 'on' ? 'on' : 'off', { retain: true }).catch(fastify.log.error)
-      break
-    default:
-      break
+
+  const kitchenCode = '01011101110101000000'
+  const kitchenOnCode = kitchenCode + onCode
+  const kitchenOffCode = kitchenCode + offCode
+
+  const vitrineCode = '01011101011101000000'
+  const vitrineOnCode = vitrineCode + onCode
+  const vitrineOffCode = vitrineCode + offCode
+
+  const nightstandCode = '01011101010111000000'
+  const nightstandOnCode = nightstandCode + onCode
+  const nightstandOffCode = nightstandCode + offCode
+
+  const myPayload = []
+
+  if (room === 'all') { myPayload.push(payload === 'on' ? [kitchenOnCode, vitrineOnCode, nightstandOnCode] : [kitchenOffCode, vitrineOffCode, nightstandOffCode]) }
+
+  if (room === 'kitchen-pc') { myPayload.push(payload === 'on' ? kitchenOnCode : kitchenOffCode) }
+
+  if (room === 'vitrine') { myPayload.push(payload === 'on' ? vitrineOnCode : vitrineOffCode) }
+
+  if (room === 'nightstand') { myPayload.push(payload === 'on' ? nightstandOnCode : nightstandOffCode) }
+
+  return myPayload
+}
+
+async function lightSwitch (fastify, mqttClient, room, payload) {
+  const topic = 'the-verse/433/lights'
+  const payloads = await onOrOff(payload, room).catch(fastify.log.error)
+  for (const item in payloads) {
+    fastify.log.info({ plugin: 'mqtt', event: 'publish', topic: topic, room: room, payload: JSON.stringify(item) })
+    mqttClient.publish(topic, item, { retain: true }).catch(fastify.log.error)
   }
+
   return 'Done'
 }

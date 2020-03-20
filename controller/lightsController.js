@@ -3,7 +3,7 @@
 module.exports = (fastify) => {
   const module = {}
 
-  module.getLights = async (req, reply) => {
+  module.getLights = async function (req, reply) {
     reply.code(501)
     reply.send({
       code: 501,
@@ -12,7 +12,7 @@ module.exports = (fastify) => {
     })
   }
 
-  module.setLight = async (req, reply) => {
+  module.setLight = async function (req, reply) {
     await fastify.mqtt(req.params.room, req.body.value)
     reply.code(201)
     reply.send()

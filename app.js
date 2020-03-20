@@ -2,43 +2,14 @@
 
 const path = require('path')
 const AutoLoad = require('fastify-autoload')
+const swagger = require('fastify-swagger')
+const swaggerConfig = require('./swagger')
 
 module.exports = (fastify, opts, next) => {
   // Place here your custom code!
   fastify.log.info(opts)
   fastify
-    .register(require('fastify-swagger'), {
-      routePrefix: '/documentation',
-      exposeRoute: true,
-      swagger: {
-        info: {
-          title: '433 Middle Man REST API',
-          description: 'testing the fastify swagger api',
-          version: '1.0.0'
-        },
-        externalDocs: {
-          url: 'https://swagger.io',
-          description: 'Find more info here'
-        },
-        // host: `${opts.address}:${opts.port}`,
-        host: '127.0.0.1:3000',
-        schemes: ['http'],
-        consumes: ['application/json'],
-        produces: ['application/json'],
-        tags: [
-          { name: 'root', description: 'Root Page.' },
-          { name: 'light', description: 'Light related end points.' }
-        ]
-        // ,
-        // securityDefinitions: {
-        //     apiKey: {
-        //         type: 'apiKey',
-        //         name: 'apiKey',
-        //         in: 'header'
-        //     }
-        // }
-      }
-    })
+    .register(swagger, swaggerConfig)
     .ready(err => {
       err ? fastify.log.error(err) : fastify.swagger()
     })
