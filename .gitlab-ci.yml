@@ -36,6 +36,8 @@ build:
 
 test_async:
   stage: test
+  variables:
+    NODE_ENV: test
   script:
     - npm install
     - npm run test

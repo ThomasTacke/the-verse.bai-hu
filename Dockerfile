@@ -2,7 +2,6 @@
 FROM node AS base
 EXPOSE 3000
 WORKDIR /usr/src/app
-RUN yarn global add fastify-cli
 
 FROM base AS dev
 
