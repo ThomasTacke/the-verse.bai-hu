@@ -4,19 +4,17 @@ services:
   mosquitto:
     image: eclipse-mosquitto:latest
     hostname: mosquitto
-    container_name: mosquitto
+    container_name: bai-hu-mosquitto
     expose:
       - 1883
       - 9001
     ports:
       - 1883:1883
       - 9001:9001
-    volumes:
-      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
 
   dev:
-    image: registry.gitlab.com/smart-home-the-verse/433mhz-middle-man:dev
-    container_name: 433mhz-middle-man-dev
+    image: registry.gitlab.com/smart-home-the-verse/bai-hu:dev
+    container_name: bai-hu-dev
     depends_on:
       - mosquitto
     build: 
@@ -34,10 +32,11 @@ services:
     stdin_open: true
     tty: true
     command: [ "npm", "run", "dev" ]
+    # command: [ "/bin/bash" ]
 
   web:
-    image: registry.gitlab.com/smart-home-the-verse/433mhz-middle-man:latest
-    container_name: 433mhz-middle-man
+    image: registry.gitlab.com/smart-home-the-verse/bai-hu:latest
+    container_name: bai-hu
     environment: 
       - MQTT_BROKER=192.168.42.45
       - ADDRESS=0.0.0.0
