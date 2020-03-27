@@ -1,5 +1,2 @@
-# 433MHz-Middle-Man
+# Bai Hu - White Tiger
 
-[![pipeline status](https://gitlab.com/RootTheKid/433mhz-middle-man/badges/master/pipeline.svg)](https://gitlab.com/RootTheKid/433mhz-middle-man/commits/master)
-[![coverage report](https://gitlab.com/RootTheKid/433mhz-middle-man/badges/master/coverage.svg)](https://gitlab.com/RootTheKid/433mhz-middle-man/commits/master)
-[![time tracker](https://wakatime.com/badge/gitlab/smart-home-the-verse/433mhz-middle-man.svg)](https://wakatime.com/badge/gitlab/smart-home-the-verse/433mhz-middle-man)
