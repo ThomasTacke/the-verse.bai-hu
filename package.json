@@ -1,5 +1,5 @@
 {
-  "name": "bai-hu",
+  "name": "@smart-home-the-verse/bai-hu",
   "version": "1.0.0",
   "description": "Wrapper from http2mqtt.",
   "main": "src/index.ts",
