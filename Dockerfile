@@ -8,6 +8,7 @@ FROM base AS dev
 # Prod image
 FROM base AS prod
 COPY package*.json ./
+RUN npm config set @smart-home-the-verse:registry https://gitlab.com/api/v4/packages/npm/
 RUN npm install
 COPY . .
 CMD [ "npm", "run", "start" ]

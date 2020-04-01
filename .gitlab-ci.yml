@@ -39,6 +39,7 @@ test_async:
   variables:
     NODE_ENV: test
   script:
+    - npm config set @smart-home-the-verse:registry https://gitlab.com/api/v4/packages/npm/
     - npm install
     - npm run test
 

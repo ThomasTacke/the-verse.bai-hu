@@ -28,6 +28,7 @@
   },
   "homepage": "https://gitlab.com/RootTheKid/bai-hu#readme",
   "dependencies": {
+    "@smart-home-the-verse/fastify-async-mqtt": "0.0.1",
     "async-mqtt": "^2.5.0",
     "fastify": "^2.13.0",
     "fastify-plugin": "^1.6.1",
