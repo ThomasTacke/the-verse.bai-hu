@@ -45,10 +45,14 @@ async function getRoomCodes(room: string) {
   const vitrineCode = '01011101011101000000';
   const nightstandCode = '01011101010111000000';
 
-  return room === 'kitchen-pc' ? { on: kitchenCode + onCode, off: kitchenCode + offCode } :
-    room === 'vitrine' ? { on: vitrineCode + onCode, off: vitrineCode + offCode } :
-      room === 'nightstand' ? { on: nightstandCode + onCode, off: nightstandCode + offCode } :
-        { error: 'No room match' };
+  const code = {
+    'kitchen-pc': { on: kitchenCode + onCode, off: kitchenCode + offCode },
+    'vitrine': { on: vitrineCode + onCode, off: vitrineCode + offCode },
+    'nightstand': { on: nightstandCode + onCode, off: nightstandCode + offCode },
+    'default': { error: 'No room match' }
+  }
+
+  return code[room];
 }
 
 async function lightSwitch(fastify: FastifyInstance, room: string, payload: string): Promise<void> {
