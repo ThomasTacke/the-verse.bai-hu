@@ -31,24 +31,18 @@ async function publishAll(fastify: FastifyInstance, room: string, newState: stri
 }
 
 async function onOrOff(payload: string, room: string): Promise<string> {
-  const onCode = '1100'
-  const offCode = '0011'
+  const onCode = '1100';
+  const offCode = '0011';
+  const kitchenCode = '01011101110101000000';
+  const vitrineCode = '01011101011101000000';
+  const nightstandCode = '01011101010111000000';
 
-  const kitchenCode = '01011101110101000000'
-  const kitchenOnCode = kitchenCode + onCode
-  const kitchenOffCode = kitchenCode + offCode
+  const roomCodes = room === 'kitchen-pc' ? { on: kitchenCode + onCode, off: kitchenCode + offCode } :
+    room === 'vitrine' ? { on: vitrineCode + onCode, off: vitrineCode + offCode } :
+      room === 'nightstand' ? { on: nightstandCode + onCode, off: nightstandCode + offCode } :
+        { error: 'No room match' };
 
-  const vitrineCode = '01011101011101000000'
-  const vitrineOnCode = vitrineCode + onCode
-  const vitrineOffCode = vitrineCode + offCode
-
-  const nightstandCode = '01011101010111000000'
-  const nightstandOnCode = nightstandCode + onCode
-  const nightstandOffCode = nightstandCode + offCode
-
-  if (room === 'kitchen-pc') { return payload === 'on' ? kitchenOnCode : kitchenOffCode }
-  if (room === 'vitrine') { return payload === 'on' ? vitrineOnCode : vitrineOffCode }
-  if (room === 'nightstand') { return payload === 'on' ? nightstandOnCode : nightstandOffCode }
+  return roomCodes[payload];
 }
 
 async function lightSwitch(fastify: FastifyInstance, room: string, payload: string): Promise<void> {
