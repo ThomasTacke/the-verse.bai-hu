@@ -2,13 +2,16 @@
 import * as Fastify from 'fastify';
 import { ServerResponse } from 'http';
 import * as Swagger from 'fastify-swagger';
+import AsyncMqtt from './plugins/fastify-async-mqtt';
+import { IClientOptions } from 'async-mqtt';
 import IndexRoute from './routes/index';
 import LightRoutes from './routes/lights';
-import mqtt from './plugins/mqtt';
 
 const fastifyOpts = process.env.NODE_ENV !== 'test' ? {
-  logger: true,
-  pluginTimeout: 10000
+  logger: {
+    level: process.env.DEBUG === 'true' ? 'debug' : 'info'
+  },
+  pluginTimeout: 10000,
 } : {}
 
 const swaggerSchema = {
@@ -29,6 +32,10 @@ const swaggerSchema = {
   exposeRoute: true
 }
 
+const mqttClientOptions: IClientOptions = {
+  host: process.env.MQTT_BROKER || 'eclipse-mosquitto'
+}
+
 const createServer = () => {
 
   // Instantiate Fastify with some config
@@ -37,18 +44,14 @@ const createServer = () => {
   // Register Swagger
   fastify.register(Swagger, swaggerSchema);
 
+  // Register Async MQTT Plugin
+  fastify.register(AsyncMqtt, mqttClientOptions);
+
   // Register routes.
   fastify.register(IndexRoute);
   fastify.register(LightRoutes);
 
-  // Register MQTT Plugin
-  fastify.register(mqtt);
-
-  fastify.setErrorHandler((error: any, request: Fastify.FastifyRequest, reply: Fastify.FastifyReply<ServerResponse>) => {
-    request.log.error(error.toString());
-    reply.code(500).send(JSON.stringify(error));
-  });
-
+  // Return the instance
   fastify.ready();
   return fastify;
 }
