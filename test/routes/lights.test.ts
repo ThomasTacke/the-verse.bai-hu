@@ -35,6 +35,7 @@ tap.test('mqtt works', async (t) => {
     retain: true
   }
   await server.mqtt.publish('the-verse/kitchen-pc/light', 'on', mqttPublishOpts);
+  await server.mqtt.publish('the-verse/na/light', 'on', mqttPublishOpts);
   await server.close();
   t.end();
 })
