@@ -50,7 +50,7 @@ async function getRoomCodes(room: string) {
     'vitrine': { on: vitrineCode + onCode, off: vitrineCode + offCode },
     'nightstand': { on: nightstandCode + onCode, off: nightstandCode + offCode },
     'default': { error: 'No room match' }
-  }[room];
+  }[room] || ['default'];
 }
 
 async function lightSwitch(fastify: FastifyInstance, room: string, payload: string): Promise<void> {
