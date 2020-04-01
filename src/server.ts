@@ -1,8 +1,7 @@
 // Require the framework
 import * as Fastify from 'fastify';
-import { ServerResponse } from 'http';
 import * as Swagger from 'fastify-swagger';
-import AsyncMqtt from './plugins/fastify-async-mqtt';
+import AsyncMqtt from '@smart-home-the-verse/fastify-async-mqtt';
 import { IClientOptions } from 'async-mqtt';
 import IndexRoute from './routes/index';
 import LightRoutes from './routes/lights';

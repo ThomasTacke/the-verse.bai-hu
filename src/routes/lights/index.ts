@@ -32,9 +32,6 @@ async function publishAll(fastify: FastifyInstance, room: string, newState: stri
 
 async function onOrOff(payload: string, room: string): Promise<string> {
   const roomCodes = await getRoomCodes(room);
-  if (roomCodes.error) {
-    return '';
-  }
   return roomCodes[payload];
 }
 
