@@ -4,5 +4,6 @@ declare namespace NodeJS {
     NODE_ENV?: string;
     ADDRESS?: string;
     PORT?: string;
+    DEBUG?: string;
   }
 }

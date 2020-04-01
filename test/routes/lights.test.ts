@@ -1,16 +1,6 @@
 import * as tap from 'tap';
 import createServer from '../../src/server';
-import { Server, IncomingMessage, ServerResponse } from 'http';
-
-declare module "fastify" {
-  export interface FastifyInstance<
-    HttpServer = Server,
-    HttpRequest = IncomingMessage,
-    HttpResponse = ServerResponse
-    > {
-    mqtt(light: string, newState: string): void
-  }
-}
+import { IClientPublishOptions } from 'async-mqtt';
 
 tap.test('default light route', async (t) => {
   const server = await createServer().ready();
@@ -37,3 +27,14 @@ tap.test('put light route', async t => {
   await server.close();
   t.done();
 });
+
+tap.test('mqtt works', async (t) => {
+  const server = await createServer().ready();
+  const mqttPublishOpts: IClientPublishOptions = {
+    qos: 0,
+    retain: true
+  }
+  await server.mqtt.publish('the-verse/kitchen-pc/light', 'on', mqttPublishOpts);
+  await server.close();
+  t.end();
+})

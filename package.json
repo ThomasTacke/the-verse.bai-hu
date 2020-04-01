@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "tap test/**/*.test.ts",
+    "test": "NODE_ENV=test tap test/**/*.test.ts",
     "start": "ts-node --files ./src/index.ts",
     "dev": "nodemon --watch './src/**/*.ts' --exec ts-node --files ./src/index.ts",
     "build": "tsc",
