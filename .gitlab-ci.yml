@@ -8,13 +8,14 @@ sonarcloud-check:
   image:
     name: sonarsource/sonar-scanner-cli:latest
     entrypoint: [""]
-  stage: sonarcloud
+  stage: deploy
   cache:
     key: "${CI_JOB_NAME}"
     paths:
       - .sonar/cache
   script:
     - sonar-scanner
+  allow_failure: true
   only:
     - merge_requests
     - master
@@ -89,7 +90,6 @@ stages:
   - test
   - buildx
   - deploy
-  - sonarcloud
 
 include:
   - template: Dependency-Scanning.gitlab-ci.yml
