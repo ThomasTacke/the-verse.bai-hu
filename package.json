@@ -7,6 +7,7 @@
     "test": "test"
   },
   "scripts": {
+    "pretest": "mkdir -p coverage",
     "test": "NODE_ENV=test tap -o coverage/coverage.tap test/**/*.test.ts",
     "posttest": "cat coverage/coverage.tap | tap --coverage-report=text-lcov > coverage/coverage.lcov",
     "start": "ts-node --files ./src/index.ts",
