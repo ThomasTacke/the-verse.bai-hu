@@ -5,7 +5,6 @@ import { MqttService } from '../../src/services/mqtt';
 
 describe('Controller: LightsController', () => {
   let instance: FastifyInstance;
-  process.env = Object.assign(process.env, { MQTT_BROKER: 'localhost' });
   MqttService.getInstance();
 
   beforeEach(async () => {
