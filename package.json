@@ -7,8 +7,9 @@
     "test": "test"
   },
   "scripts": {
-    "pretest": "mkdir -p coverage",
-    "test": "NODE_ENV=test tap -o coverage/coverage.tap test/**/*.test.ts",
+    "pretest": "",
+    "test": "jest --verbose true",
+    "coverage": "jest --coverage=true",
     "start": "ts-node --files ./src/index.ts",
     "dev": "nodemon --watch './src/**/*.ts' --exec ts-node --files ./src/index.ts",
     "build": "tsc",
@@ -30,16 +31,24 @@
   "homepage": "https://gitlab.com/RootTheKid/bai-hu#readme",
   "dependencies": {
     "@smart-home-the-verse/fastify-async-mqtt": "0.0.1",
-    "async-mqtt": "^2.5.0",
-    "fastify": "^2.13.0",
-    "fastify-plugin": "^1.6.1",
-    "fastify-swagger": "^2.5.0"
+    "@types/pino": "^6.3.2",
+    "async-exit-hook": "^2.0.1",
+    "async-mqtt": "^2.6.1",
+    "dotenv": "^8.2.0",
+    "fastify": "^3.6.0",
+    "fastify-decorators": "^3.2.3",
+    "fastify-swagger": "^3.4.0",
+    "fluent-schema": "^1.0.4",
+    "pino": "^6.7.0"
   },
   "devDependencies": {
-    "@types/node": "^12.12.31",
-    "tap": "^14.10.7",
-    "ts-node": "^8.8.1",
-    "tslint": "^6.1.0",
-    "typescript": "^3.8.3"
+    "@types/dotenv": "^8.2.0",
+    "@types/jest": "^26.0.14",
+    "@types/node": "^14.11.8",
+    "eslint": "^7.11.0",
+    "jest": "^26.5.3",
+    "ts-jest": "^26.4.1",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.3"
   }
 }
